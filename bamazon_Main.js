@@ -17,8 +17,12 @@ var products = "SELECT item_id, product_name, department_name, price FROM produc
 var byDep = "SELECT item_id, product_name, department_name, price FROM products WHERE department_name = ?";
 var byID = "SELECT item_id, product_name, department_name, price FROM products WHERE item_id BETWEEN ? AND ?";
 var byPrice = "SELECT item_id, product_name, department_name, price FROM products WHERE price BETWEEN ? AND ?";
+var inventory = "SELECT * FROM products";
+var lowInventory = "SELECT * FROM products WHERE stock_quantity <= 5";
+var addToInventory = "UPDATE products WHERE item_id = ? SET stock_quantity = ?";
+var addProduct = "INSERT INTO products SET ?";
 
-// functions
+// customer functions
 // customer view of products
 function customerView(err, res){
 
@@ -78,8 +82,88 @@ function shopByPrice(){
     });
 }
 
-inquirer.prompt([
-    {
-        name
-    }
-]).then({});
+// customer - user interaction
+function customer(){
+
+    viewProducts();
+
+    inquirer.prompt([
+        {
+            name: "customer",
+            type: "list",
+            message: "What would you like to do?",
+            choices: ["Shop by department", "Shop by price", "Shop by product id"]
+    
+        }
+    ]).then(function(res){
+        
+        if (res.choices[0]){}
+        else if (res.choices[1]){}
+        else {}
+
+    });
+
+}
+
+// ===========================================
+
+// manager functions
+// manager view of products
+function managerView(err, res){
+
+    if (err) throw err;
+
+    var newRow, 
+        data, 
+        output;
+    
+    data = [
+        ["ID", "Item", "Department", "Price (dollars)", "Quantity"],
+    ];
+
+    for (i=0; i<res.length; i++){
+        newRow = [];
+        newRow.push(
+            res[i].item_id,
+            res[i].product_name,
+            res[i].department_name,
+            res[i].price,
+            res[i].stock_quantity
+        );
+        data.push(newRow);
+        newRow = [];
+    };
+
+    output = table(data);
+    console.log(output);
+
+    connection.end(); 
+}
+
+// view inventory
+function viewInventory(){
+    connection.query(inventory, function(err, res){       
+        managerView(err, res); 
+    });
+}
+
+// view low inventory
+function viewLowInventory(){
+    connection.query(lowInventory, function(err, res){       
+        managerView(err, res); 
+    });
+}
+
+// add to inventory
+function addToInventory(){
+    connection.query(addToInventory, function(err, res){       
+        managerView(err, res); 
+    });
+}
+
+// add new product
+function addProduct(){
+    connection.query(addProduct, function(err, res){       
+        managerView(err, res); 
+    });
+}
