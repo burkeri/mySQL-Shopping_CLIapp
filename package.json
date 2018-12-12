@@ -1,0 +1,32 @@
+{
+  "name": "bamazon_package",
+  "version": "1.0.0",
+  "description": "dependencies for bamazon",
+  "main": "bamazon_Main.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/burkeri/mySQL-Shopping_CLIapp.git"
+  },
+  "keywords": [
+    "mysql",
+    "node",
+    "javascript",
+    "database",
+    "example",
+    "cli"
+  ],
+  "author": "rb",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/burkeri/mySQL-Shopping_CLIapp/issues"
+  },
+  "homepage": "https://github.com/burkeri/mySQL-Shopping_CLIapp#readme",
+  "dependencies": {
+    "inquirer": "^6.2.1",
+    "mysql": "^2.16.0",
+    "table": "^5.1.1"
+  }
+}
