@@ -12,18 +12,23 @@ var connection = mysql.createConnection({
     database: "bamazon_DB"
 });
 
-// query search variables
-var products = "SELECT item_id, product_name, department_name, price FROM products";
-var byDep = "SELECT item_id, product_name, department_name, price FROM products WHERE department_name = ?";
-var byID = "SELECT item_id, product_name, department_name, price FROM products WHERE item_id BETWEEN ? AND ?";
-var byPrice = "SELECT item_id, product_name, department_name, price FROM products WHERE price BETWEEN ? AND ?";
+// query search vairables
 var inventory = "SELECT * FROM products";
 var lowInventory = "SELECT * FROM products WHERE stock_quantity <= 5";
 var addToInventory = "UPDATE products WHERE item_id = ? SET stock_quantity = ?";
 var addProduct = "INSERT INTO products SET ?";
 
-// customer functions
-// customer view of products
+// =========================================== CUSTOMER
+
+// query search variables
+var products = "SELECT item_id, product_name, department_name, price FROM products";
+var byDep = "SELECT item_id, product_name, department_name, price FROM products WHERE department_name = ?";
+var byID = "SELECT item_id, product_name, department_name, price FROM products WHERE item_id BETWEEN ? AND ?";
+var byPrice = "SELECT item_id, product_name, department_name, price FROM products WHERE price BETWEEN ? AND ?";
+
+// functions
+
+// product table config - custoemr
 function customerView(err, res){
 
     if (err) throw err;
@@ -62,23 +67,45 @@ function viewProducts(){
 }
 
 // shop products by department
-function shopByDep(){
-    connection.query(byDep, process.argv[2], function(err, res){     
+function shopByDep(dep){
+    connection.query(byDep, dep, function(err, res){     
         customerView(err, res);
     });
 }
 
 // shop products by id
-function shopByID(){
-    connection.query(byID, process.argv[0], function(err, res){
+function shopByID(id){
+    connection.query(byID, id, function(err, res){
         customerView(err, res);
     });
 }
 
+
+
 // shop products by price
-function shopByPrice(){
-    connection.query(byPrice, process.argv[0], function(err, res){
+function shopByPrice(p1, p2){
+    connection.query(byPrice, [p1, p2], function(err, res){
         customerView(err, res);
+    });
+}
+
+function customerPrice () {
+
+    inquirer.prompt([
+
+        {
+            name: "price1",
+            type: "input",
+            message: "Enter your minimum price: "
+        },
+        {
+            name: "price2",
+            type: "input",
+            message: "Enter your maximum price: "
+        }
+
+    ]).then(function(res){
+        shopByPrice(res.price1, res.price2);
     });
 }
 
