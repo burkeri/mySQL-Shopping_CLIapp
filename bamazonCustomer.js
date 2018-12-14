@@ -15,6 +15,7 @@ var connection = mysql.createConnection({
 var products = "SELECT item_id, product_name, department_name, price FROM products";
 var byDep = "SELECT item_id, product_name, department_name, price FROM products WHERE department_name = ?";
 var byPrice = "SELECT item_id, product_name, department_name, price FROM products WHERE price BETWEEN ? AND ?";
+var findPrice = "SELECT price FROM products WHERE item_id = ?";
 
 // product table config
 function customerView (err, res) {
@@ -44,31 +45,6 @@ function customerView (err, res) {
     console.log("\n");
     console.log(output);
     console.log("\n");
-}
-
-// keep shopping or go to checkout
-function contin() {
-
-    inquirer.prompt([
-        {
-            name: "continue",
-            type: "list",
-            choices: ["Keep shopping.", "Go to checkout"]
-        }
-    ]).then(function (res) {
-
-        switch (res.continue) {
-
-            case "Keep shopping.":
-                module.exports.customer();
-                break;
-
-            case "Go to checkout":
-                console.log("DONE");
-                connection.end();
-                break;
-        }
-    })
 }
 
 // view all products
@@ -130,6 +106,68 @@ function customerPrice() {
     ]).then(function (res) {
         shopByPrice(res.price1, res.price2);
     });
+}
+
+// inquirer will take in the id of the desired item
+// we capture that input and store it in a variable
+// inquirer will capture the quantity
+// we will capture quantity in a variables
+// then we will do the math to get the total and print
+// "quatity"x of "name of product" - total: "full price"
+// is this ok?
+// if yes update the db, if no run contin
+
+
+function goToCheckout() {
+
+    inquirer.prompt([
+        {
+            name: "enterId",
+            type: "input",
+            message: "Enter the id of the item you would like to purchase: ",
+        },
+        {
+            name: "enterQuant",
+            type: "input",
+            message: "How many would you like to purchase? "
+        }
+    ]).then(function(res){
+        
+        var itemPrice = getItemPrice(res.enterId);
+
+    });
+
+}
+
+function getItemPrice(id){
+    connection.query(findPrice, id, function (err, res) {
+        if(err) throw err;
+        return res[0].price;
+    });
+}
+
+// keep shopping or go to checkout
+function contin() {
+
+    inquirer.prompt([
+        {
+            name: "continue",
+            type: "list",
+            choices: ["Keep shopping.", "Go to checkout"]
+        }
+    ]).then(function (res) {
+        
+        switch (res.continue) {
+
+            case "Keep shopping.":
+                module.exports.customer();
+                break;
+
+            case "Go to checkout":
+                goToCheckout();
+                break;
+        }
+    })
 }
 
 module.exports = {
