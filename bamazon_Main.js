@@ -1,42 +1,42 @@
-// require packages
-var inquirer = require("inquirer");
-var mysql = require("mysql");
-const { table } = require("table");
+// // require packages
+// var inquirer = require("inquirer");
+// var mysql = require("mysql");
+// const { table } = require("table");
 
-// config db connection
-var connection = mysql.createConnection({
-    host: "localhost",
-    port: 3306,
-    user: "root",
-    password: "root",
-    database: "bamazon_DB"
-});
+// // config database
+// connection: mysql.createConnection({
+//     host: "localhost",
+//     port: 3306,
+//     user: "root",
+//     password: "root",
+//     database: "bamazon_DB"
+// });
 
-// require files
 var customer = require("./bamazon_Customer");
 
-inquirer.prompt([
+customer.test();
 
-    {
-        name: "welcome",
-        type: "list",
-        message: "\nWelcome to Bamazon! How may I help you?\n",
-        choices: ["I am a customer.", "I am a store manager.", "I am a branch supervisor."]
-    }
+// inquirer.prompt([
 
-]).then(function(res){
+//     {
+//         name: "welcome",
+//         type: "list",
+//         message: "\nWelcome to Bamazon! How may I help you?\n",
+//         choices: ["I am a customer.", "I am a store manager.", "I am a branch supervisor."]
+//     }
 
-    switch(res.welcome){
+// ]).then(function(res){
 
-        case "I am a customer.":
+//     switch(res.welcome){
 
-        break;
+//         case "I am a customer.":
+//         customer.customer();
+//         break;
+
+//     }
 
 
-    }
-
-
-});
+// });
 
 
     
@@ -49,138 +49,138 @@ inquirer.prompt([
 
 
 
-// shop by department
-function customerDepartment() {
+// // shop by department
+// function customerDepartment() {
 
-    inquirer.prompt([
+//     inquirer.prompt([
 
-        {
-            name: "dep",
-            type: "input",
-            message: "Enter department name: "
-        }
+//         {
+//             name: "dep",
+//             type: "input",
+//             message: "Enter department name: "
+//         }
 
-    ]).then(function (res) {
-        shopByDep(res.dep);
-    });
-}
+//     ]).then(function (res) {
+//         shopByDep(res.dep);
+//     });
+// }
 
-// shop by price
-function customerPrice() {
+// // shop by price
+// function customerPrice() {
 
-    inquirer.prompt([
+//     inquirer.prompt([
 
-        {
-            name: "price1",
-            type: "input",
-            message: "Enter your minimum price: "
-        },
-        {
-            name: "price2",
-            type: "input",
-            message: "Enter your maximum price: "
-        }
+//         {
+//             name: "price1",
+//             type: "input",
+//             message: "Enter your minimum price: "
+//         },
+//         {
+//             name: "price2",
+//             type: "input",
+//             message: "Enter your maximum price: "
+//         }
 
-    ]).then(function (res) {
-        shopByPrice(res.price1, res.price2);
-    });
-}
+//     ]).then(function (res) {
+//         shopByPrice(res.price1, res.price2);
+//     });
+// }
 
-// go to checkout
-function customerCheckout(){
+// // go to checkout
+// function customerCheckout(){
 
-    inquirer.prompt([
-        {
-            name: "checkout",
-            type: "input",
-            message: "Enter the id of the item you would like to purchase: "
-        }
-    ]).then(function(res){
-        var item = res.checkout;
-        goToCheckout(res.checkout);
-    }).prompt([
-        {
-            name: "ok",
-            type: "confirm",
-            message: "Is this ok?"
-        }
-    ]).then(function(res){
-        if(res.ok){
-            console.log(item);
-        }
-    })
-}
-
-
+//     inquirer.prompt([
+//         {
+//             name: "checkout",
+//             type: "input",
+//             message: "Enter the id of the item you would like to purchase: "
+//         }
+//     ]).then(function(res){
+//         var item = res.checkout;
+//         goToCheckout(res.checkout);
+//     }).prompt([
+//         {
+//             name: "ok",
+//             type: "confirm",
+//             message: "Is this ok?"
+//         }
+//     ]).then(function(res){
+//         if(res.ok){
+//             console.log(item);
+//         }
+//     })
+// }
 
 
-// =========================================== MANAGER
-
-// query search vairables - manager
-var inventory = "SELECT * FROM products";
-var lowInventory = "SELECT * FROM products WHERE stock_quantity <= 5";
-var addToInventory = "UPDATE products WHERE item_id = ? SET stock_quantity = ?";
-var addProduct = "INSERT INTO products SET ?";
 
 
-// functions
+// // =========================================== MANAGER
 
-// product table config - manager
-function managerView(err, res) {
+// // query search vairables - manager
+// var inventory = "SELECT * FROM products";
+// var lowInventory = "SELECT * FROM products WHERE stock_quantity <= 5";
+// var addToInventory = "UPDATE products WHERE item_id = ? SET stock_quantity = ?";
+// var addProduct = "INSERT INTO products SET ?";
 
-    if (err) throw err;
 
-    var newRow,
-        data,
-        output;
+// // functions
 
-    data = [
-        ["ID", "Item", "Department", "Price (dollars)", "Quantity"],
-    ];
+// // product table config - manager
+// function managerView(err, res) {
 
-    for (i = 0; i < res.length; i++) {
-        newRow = [];
-        newRow.push(
-            res[i].item_id,
-            res[i].product_name,
-            res[i].department_name,
-            res[i].price,
-            res[i].stock_quantity
-        );
-        data.push(newRow);
-        newRow = [];
-    };
+//     if (err) throw err;
 
-    output = table(data);
-    console.log(output);
+//     var newRow,
+//         data,
+//         output;
 
-    connection.end();
-}
+//     data = [
+//         ["ID", "Item", "Department", "Price (dollars)", "Quantity"],
+//     ];
 
-// view inventory
-function viewInventory() {
-    connection.query(inventory, function (err, res) {
-        managerView(err, res);
-    });
-}
+//     for (i = 0; i < res.length; i++) {
+//         newRow = [];
+//         newRow.push(
+//             res[i].item_id,
+//             res[i].product_name,
+//             res[i].department_name,
+//             res[i].price,
+//             res[i].stock_quantity
+//         );
+//         data.push(newRow);
+//         newRow = [];
+//     };
 
-// view low inventory
-function viewLowInventory() {
-    connection.query(lowInventory, function (err, res) {
-        managerView(err, res);
-    });
-}
+//     output = table(data);
+//     console.log(output);
 
-// add to inventory
-function addToInventory() {
-    connection.query(addToInventory, function (err, res) {
-        managerView(err, res);
-    });
-}
+//     connection.end();
+// }
 
-// add new product
-function addProduct() {
-    connection.query(addProduct, function (err, res) {
-        managerView(err, res);
-    });
-}
+// // view inventory
+// function viewInventory() {
+//     connection.query(inventory, function (err, res) {
+//         managerView(err, res);
+//     });
+// }
+
+// // view low inventory
+// function viewLowInventory() {
+//     connection.query(lowInventory, function (err, res) {
+//         managerView(err, res);
+//     });
+// }
+
+// // add to inventory
+// function addToInventory() {
+//     connection.query(addToInventory, function (err, res) {
+//         managerView(err, res);
+//     });
+// }
+
+// // add new product
+// function addProduct() {
+//     connection.query(addProduct, function (err, res) {
+//         managerView(err, res);
+//     });
+// }

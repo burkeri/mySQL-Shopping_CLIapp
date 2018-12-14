@@ -2,7 +2,7 @@
   "name": "bamazon_package",
   "version": "1.0.0",
   "description": "dependencies for bamazon",
-  "main": "bamazon_Main.js",
+  "main": "bamazonMain.js",
   "scripts": {
     "test": "test"
   },
