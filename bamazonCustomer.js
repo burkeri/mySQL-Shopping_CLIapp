@@ -13,6 +13,8 @@ var connection = mysql.createConnection({
 
 // query search variables
 var products = "SELECT item_id, product_name, department_name, price FROM products";
+var byDep = "SELECT item_id, product_name, department_name, price FROM products WHERE department_name = ?";
+var byPrice = "SELECT item_id, product_name, department_name, price FROM products WHERE price BETWEEN ? AND ?";
 
 // product table config
 function customerView (err, res) {
@@ -44,13 +46,6 @@ function customerView (err, res) {
     console.log("\n");
 }
 
-// view all products
-function viewProducts () {
-    connection.query(products, function (err, res) {
-        customerView(err, res);
-    });
-}
-
 // keep shopping or go to checkout
 function contin() {
 
@@ -76,6 +71,67 @@ function contin() {
     })
 }
 
+// view all products
+function viewProducts () {
+    connection.query(products, function (err, res) {
+        customerView(err, res);
+        contin();
+    });
+}
+
+// shop products by department - table config
+function shopByDep(dep) {
+    connection.query(byDep, dep, function (err, res) {
+        customerView(err, res);
+        contin();
+    });
+}
+
+// shop by department
+function customerDepartment() {
+
+    inquirer.prompt([
+
+        {
+            name: "dep",
+            type: "input",
+            message: "Enter department name: "
+        }
+
+    ]).then(function (res) {
+        shopByDep(res.dep);
+    });
+}
+
+// shop products by price - table config
+function shopByPrice(p1, p2) {
+    connection.query(byPrice, [p1, p2], function (err, res) {
+        customerView(err, res);
+        contin();
+    });
+}
+
+// shop by price
+function customerPrice() {
+
+    inquirer.prompt([
+
+        {
+            name: "price1",
+            type: "input",
+            message: "Enter your minimum price: "
+        },
+        {
+            name: "price2",
+            type: "input",
+            message: "Enter your maximum price: "
+        }
+
+    ]).then(function (res) {
+        shopByPrice(res.price1, res.price2);
+    });
+}
+
 module.exports = {
 
     customer: function() {
@@ -91,10 +147,14 @@ module.exports = {
             switch(res.customer) {
                 case "View all products":
                     viewProducts();
-                    contin();
                     break;
 
                 case "Shop by department":
+                    customerDepartment();
+                    break;
+
+                case "Shop by price":
+                    customerPrice();
                     break;
             }
         });
