@@ -5,6 +5,9 @@ var inquirer = require("inquirer");
 var customer = require("./bamazonCustomer");
 
 // app
+
+// disclaimer
+console.log("\n 'Manager' and 'Supervisor' will be available in the next update. Please select 'I am a customer.'\n");
 inquirer.prompt([
 
     {

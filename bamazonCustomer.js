@@ -16,6 +16,7 @@ var products = "SELECT item_id, product_name, department_name, price FROM produc
 var byDep = "SELECT item_id, product_name, department_name, price FROM products WHERE department_name = ?";
 var byPrice = "SELECT item_id, product_name, department_name, price FROM products WHERE price BETWEEN ? AND ?";
 var findPrice = "SELECT price, product_name FROM products WHERE item_id = ?";
+var updateQuant = "UPDATE products SET stock_quantity = (stock_quantity - ?) WHERE product_name = ?";
 
 // product table config
 function customerView (err, res) {
@@ -108,15 +109,7 @@ function customerPrice() {
     });
 }
 
-// inquirer will take in the id of the desired item
-// we capture that input and store it in a variable
-// inquirer will capture the quantity
-// we will capture quantity in a variables
-// then we will do the math to get the total and print
-// "quatity"x of "name of product" - total: "full price"
-// is this ok?
-// if yes update the db, if no run contin
-
+// enter checkout
 function goToCheckout() {
 
     inquirer.prompt([
@@ -155,8 +148,13 @@ function goToCheckout() {
                     message: "Is this ok?"
                 }
             ]).then(function(res){
-                if(!res.ok){
-                    contin();
+                if(res.ok){
+
+                    connection.query(updateQuant, [quanitity, name], function (err, res) {
+                        console.log("\nThank you for your purchase!\n");
+                        connection.end();
+                    });
+
                 }
                 else{
                     contin();
@@ -177,13 +175,14 @@ function contin() {
         {
             name: "continue",
             type: "list",
-            choices: ["Keep shopping.", "Go to checkout"]
+            message: "What would you like to do?",
+            choices: ["Keep shopping", "Go to checkout"]
         }
     ]).then(function (res) {
         
         switch (res.continue) {
 
-            case "Keep shopping.":
+            case "Keep shopping":
                 module.exports.customer();
                 break;
 
@@ -193,8 +192,6 @@ function contin() {
         }
     })
 }
-
-
 
 module.exports = {
 
