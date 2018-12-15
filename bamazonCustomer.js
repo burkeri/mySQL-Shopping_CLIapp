@@ -15,7 +15,7 @@ var connection = mysql.createConnection({
 var products = "SELECT item_id, product_name, department_name, price FROM products";
 var byDep = "SELECT item_id, product_name, department_name, price FROM products WHERE department_name = ?";
 var byPrice = "SELECT item_id, product_name, department_name, price FROM products WHERE price BETWEEN ? AND ?";
-var findPrice = "SELECT price FROM products WHERE item_id = ?";
+var findPrice = "SELECT price, product_name FROM products WHERE item_id = ?";
 
 // product table config
 function customerView (err, res) {
@@ -117,7 +117,6 @@ function customerPrice() {
 // is this ok?
 // if yes update the db, if no run contin
 
-
 function goToCheckout() {
 
     inquirer.prompt([
@@ -133,18 +132,43 @@ function goToCheckout() {
         }
     ]).then(function(res){
         
-        var itemPrice = getItemPrice(res.enterId);
+        // set the quantity to a variable
+        var quanitity = parseInt(res.enterQuant);
 
+        // get the price from the db
+        connection.query(findPrice, res.enterId, function (err, res) {
+            if(err) throw err;
+
+            // set the price eqaul to a variable
+            var price = res[0].price;
+            // set the name to a variable
+            var name = res[0].product_name;
+            // calculate the total
+            var total = (price * quanitity);
+
+            console.log("\n" + quanitity + "x" + " " + name + " - Total: $" + total + "\n");
+
+            inquirer.prompt([
+                {
+                    name: "ok",
+                    type: "confirm",
+                    message: "Is this ok?"
+                }
+            ]).then(function(res){
+                if(!res.ok){
+                    contin();
+                }
+                else{
+                    contin();
+                }
+            })
+ 
+        });
+    
     });
 
 }
 
-function getItemPrice(id){
-    connection.query(findPrice, id, function (err, res) {
-        if(err) throw err;
-        return res[0].price;
-    });
-}
 
 // keep shopping or go to checkout
 function contin() {
@@ -169,6 +193,8 @@ function contin() {
         }
     })
 }
+
+
 
 module.exports = {
 
